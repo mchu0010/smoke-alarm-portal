@@ -71,12 +71,13 @@ var state_abbrevs =
         "Armed Forces Pacific":           "AP"
     };
 
-// get count of requests saved for a given region
-var countRequestsPerRegion = function (region) {
-    if (region){
+// this function takes a county object and return the count
+// of requests saved for a given region
+var countRequestsPerRegion = function (county) {
+    if (county){
         return db.Request.count({
             where: {
-                assigned_rc_region: region
+                assigned_rc_region: county.region
             }
         });
     }
@@ -404,14 +405,11 @@ exports.saveRequest = function(req, res) {
     var zip_for_lookup = zip_set.zip_for_lookup;
     findAddressFromZip(zip_for_lookup).then(function(address) {
         return findCountyFromAddress(address, zip_for_lookup);
-    }).then( function(county_id){
-        if (county_id){
-            region_code = county_id.region;
-        }
-        else {
-            region_code = null
-        }
-        return countRequestsPerRegion(region_code);
+    }).then( function(county){
+        // the county parameter is an object representing one row
+        // of the selected_counties table    
+        region_code = county.region;
+        return countRequestsPerRegion(county);      
     }).then( function(numRequests) {
         requestData = getRequestData(req, numRequests, region_code);
         return saveRequestData(requestData);
