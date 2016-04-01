@@ -162,13 +162,11 @@ block content
               $('form').unbind('submit').submit();
             }
           },
-          'error': function(jqXHR,error, errorThrown) {  
-             if(jqXHR.status&&jqXHR.status==400){
-                  alert(jqXHR.responseText); 
-             } else {
-                 alert("Something went wrong");
-             }
+          'error': function(jqXHR, error, errorThrown) {
+            if (jqXHR) {
+              $('#error-message').addClass('alert alert-danger').html("Oops. Something went wrong. Please try again.");
             }
+          }
         });
       });
       
